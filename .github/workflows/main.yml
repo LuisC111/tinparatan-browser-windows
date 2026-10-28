@@ -4,8 +4,22 @@ on:
     inputs:
       runner:
         required: false
-        description: 'Runner image name'
+        description: 'Self-hosted Windows runner label. GitHub-hosted windows-2025 cannot finish a Chromium build; see TINPARATAN.md.'
         default: 'windows-2025'
+      arch:
+        required: false
+        description: 'Architecture to build'
+        type: choice
+        options:
+          - x86_64
+          - arm64
+          - both
+        default: x86_64
+      sign:
+        required: false
+        type: boolean
+        description: 'Authenticode-sign with Azure Trusted Signing. Needs AZURE_* secrets; leave off on this fork.'
+        default: false
       do-release:
         required: false
         type: boolean
@@ -20,7 +34,7 @@ jobs:
     name: Build ${{ matrix.arch }}
     strategy:
       matrix:
-        arch: [x86_64, arm64]
+        arch: ${{ inputs.arch == 'both' && fromJSON('["x86_64", "arm64"]') || fromJSON(format('["{0}"]', inputs.arch)) }}
       fail-fast: false
     uses: ./.github/workflows/build-steps.yml
     secrets:
@@ -33,10 +47,11 @@ jobs:
     with:
       arch: ${{ matrix.arch }}
       runs-on: ${{ inputs.runner }}
+      sign: ${{ inputs.sign && 'true' || 'false' }}
 
   publish-release:
     needs: build
-    if: ${{ inputs.do-release }}
+    if: ${{ inputs.do-release && success() }}
     runs-on: ubuntu-latest
     permissions:
       contents: write

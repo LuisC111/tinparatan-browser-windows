@@ -1,3 +1,13 @@
+# Tinparatan for Windows
+
+This fork packages [Tinparatan](https://github.com/LuisC111/tinparatan-browser),
+a personal build of Helium. The submodule, branding patch, and CI changes are
+layered on top of upstream so a merge from
+[imputnet/helium-windows](https://github.com/imputnet/helium-windows) stays
+small. Read [TINPARATAN.md](TINPARATAN.md) before building or syncing.
+
+The upstream README follows.
+
 # helium-windows
 
 Windows packaging for [Helium](https://github.com/imputnet/helium).

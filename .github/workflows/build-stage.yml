@@ -8,22 +8,26 @@ on:
       runs-on:
         required: true
         type: string
+      sign:
+        required: false
+        type: string
+        default: 'false'
       from-artifact:
         required: true
         type: boolean
     secrets:
       AZURE_TENANT_ID:
-        required: true
+        required: false
       AZURE_CLIENT_ID:
-        required: true
+        required: false
       AZURE_CLIENT_SECRET:
-        required: true
+        required: false
       AZURE_SIGNING_ENDPOINT:
-        required: true
+        required: false
       AZURE_SIGNING_ACCOUNT:
-        required: true
+        required: false
       AZURE_SIGNING_CERTIFICATE_NAME:
-        required: true
+        required: false
     outputs:
       finished:
         value: ${{ jobs.build.outputs.finished }}
@@ -58,6 +62,7 @@ jobs:
         with:
           from_artifact: false
           arch: ${{ inputs.arch }}
+          sign: ${{ inputs.sign }}
           azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
           azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}

@@ -277,6 +277,13 @@ def main():
             # Append translations
             i18n_apply.apply_translations(source_tree)
 
+            # Tinparatan (TINPARATAN.md): Helium's translations still say Helium.
+            subprocess.run([
+                sys.executable,
+                str(_ROOT_DIR / 'helium-chromium' / 'tinparatan' / 'substitute_product_name.py'),
+                '--sub', '-t', str(source_tree),
+            ], check=True)
+
         # Set version
         version_parts = helium_version.get_version_parts(_ROOT_DIR / 'helium-chromium', _ROOT_DIR)
         chrome_version_path = source_tree / "chrome" / "VERSION"
@@ -308,6 +315,19 @@ def main():
             _ROOT_DIR / 'helium-chromium' / 'resources' / 'helium_resources.txt',
             _ROOT_DIR / 'helium-chromium' / 'resources',
             source_tree
+        )
+
+        # Tinparatan (TINPARATAN.md): regenerate from the master logo, then
+        # overwrite Helium's copies, including chromium.ico. This stays after
+        # helium_resources.txt so the taskbar icon is Tinparatan's.
+        subprocess.run([
+            sys.executable,
+            str(_ROOT_DIR / 'helium-chromium' / 'resources' / 'tinparatan' / 'generate.py'),
+        ], check=True)
+        replace_resources.copy_resources(
+            _ROOT_DIR / 'helium-chromium' / 'resources' / 'tinparatan' / 'tinparatan_resources.txt',
+            _ROOT_DIR / 'helium-chromium' / 'resources' / 'tinparatan',
+            source_tree,
         )
 
         _configure_remoteexec(source_tree)
