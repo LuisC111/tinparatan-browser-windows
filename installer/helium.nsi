@@ -22,10 +22,21 @@
 !include "FileFunc.nsh"
 
 ; --- Product Information ---
+; Tinparatan passes -DPRODUCT_NAME and -DPRODUCT_GUID. The defaults keep a
+; stock Helium installer when those defines are absent. PRODUCT_COMPANY_PATH
+; stays "imput" so the launch path matches kCompanyPathName.
+!ifndef PRODUCT_NAME
 !define PRODUCT_NAME "Helium"
+!endif
+!ifndef PRODUCT_PUBLISHER
 !define PRODUCT_PUBLISHER "imput"
+!endif
+!ifndef PRODUCT_COMPANY_PATH
 !define PRODUCT_COMPANY_PATH "imput"
+!endif
+!ifndef PRODUCT_GUID
 !define PRODUCT_GUID "{FB68A146-637A-48C2-A0C4-1565DE45FEBD}"
+!endif
 
 ; --- Installer Configuration ---
 Name "${PRODUCT_NAME} ${VERSION}"

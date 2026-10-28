@@ -9,19 +9,23 @@ on:
       runs-on:
         required: true
         type: string
+      sign:
+        required: false
+        type: string
+        default: 'false'
     secrets:
       AZURE_TENANT_ID:
-        required: true
+        required: false
       AZURE_CLIENT_ID:
-        required: true
+        required: false
       AZURE_CLIENT_SECRET:
-        required: true
+        required: false
       AZURE_SIGNING_ENDPOINT:
-        required: true
+        required: false
       AZURE_SIGNING_ACCOUNT:
-        required: true
+        required: false
       AZURE_SIGNING_CERTIFICATE_NAME:
-        required: true
+        required: false
 
 permissions:
   contents: read
@@ -37,6 +41,7 @@ jobs:
     with:
       arch: ${{ inputs.arch }}
       runs-on: ${{ inputs.runs-on }}
+      sign: ${{ inputs.sign }}
       from-artifact: false
 
   build-2:
@@ -47,6 +52,7 @@ jobs:
     with:
       arch: ${{ inputs.arch }}
       runs-on: ${{ inputs.runs-on }}
+      sign: ${{ inputs.sign }}
       from-artifact: true
 
   build-3:
@@ -57,6 +63,7 @@ jobs:
     with:
       arch: ${{ inputs.arch }}
       runs-on: ${{ inputs.runs-on }}
+      sign: ${{ inputs.sign }}
       from-artifact: true
 
   build-4:
@@ -67,6 +74,7 @@ jobs:
     with:
       arch: ${{ inputs.arch }}
       runs-on: ${{ inputs.runs-on }}
+      sign: ${{ inputs.sign }}
       from-artifact: true
 
   build-5:
@@ -77,6 +85,7 @@ jobs:
     with:
       arch: ${{ inputs.arch }}
       runs-on: ${{ inputs.runs-on }}
+      sign: ${{ inputs.sign }}
       from-artifact: true
 
   build-6:
@@ -87,6 +96,7 @@ jobs:
     with:
       arch: ${{ inputs.arch }}
       runs-on: ${{ inputs.runs-on }}
+      sign: ${{ inputs.sign }}
       from-artifact: true
 
   build-7:
@@ -97,6 +107,7 @@ jobs:
     with:
       arch: ${{ inputs.arch }}
       runs-on: ${{ inputs.runs-on }}
+      sign: ${{ inputs.sign }}
       from-artifact: true
 
   build-8:
@@ -107,6 +118,7 @@ jobs:
     with:
       arch: ${{ inputs.arch }}
       runs-on: ${{ inputs.runs-on }}
+      sign: ${{ inputs.sign }}
       from-artifact: true
 
   build-9:
@@ -117,6 +129,7 @@ jobs:
     with:
       arch: ${{ inputs.arch }}
       runs-on: ${{ inputs.runs-on }}
+      sign: ${{ inputs.sign }}
       from-artifact: true
 
   build-10:
@@ -127,6 +140,7 @@ jobs:
     with:
       arch: ${{ inputs.arch }}
       runs-on: ${{ inputs.runs-on }}
+      sign: ${{ inputs.sign }}
       from-artifact: true
 
   build-11:
@@ -137,6 +151,7 @@ jobs:
     with:
       arch: ${{ inputs.arch }}
       runs-on: ${{ inputs.runs-on }}
+      sign: ${{ inputs.sign }}
       from-artifact: true
 
   build-12:
@@ -147,6 +162,7 @@ jobs:
     with:
       arch: ${{ inputs.arch }}
       runs-on: ${{ inputs.runs-on }}
+      sign: ${{ inputs.sign }}
       from-artifact: true
 
   build-13:
@@ -157,6 +173,7 @@ jobs:
     with:
       arch: ${{ inputs.arch }}
       runs-on: ${{ inputs.runs-on }}
+      sign: ${{ inputs.sign }}
       from-artifact: true
 
   build-14:
@@ -167,6 +184,7 @@ jobs:
     with:
       arch: ${{ inputs.arch }}
       runs-on: ${{ inputs.runs-on }}
+      sign: ${{ inputs.sign }}
       from-artifact: true
 
   build-15:
@@ -177,6 +195,7 @@ jobs:
     with:
       arch: ${{ inputs.arch }}
       runs-on: ${{ inputs.runs-on }}
+      sign: ${{ inputs.sign }}
       from-artifact: true
 
   package:
@@ -192,6 +211,7 @@ jobs:
         id: package
         with:
           arch: ${{ inputs.arch }}
+          sign: ${{ inputs.sign }}
           azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
           azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}

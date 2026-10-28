@@ -7,13 +7,17 @@
 import argparse
 import json
 import os
-from pathlib import Path
 import shutil
 import subprocess
+import sys
+from pathlib import Path
 
 import package
 
 ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT / 'tinparatan'))
+import packaging as tinparatan
+sys.path.pop(0)
 SOURCE = ROOT / 'build/src'
 
 
@@ -57,7 +61,7 @@ def sign(files, description, args, metadata):
         run(args.signtool, 'sign', '/fd', 'SHA256',
             '/tr', 'http://timestamp.acs.microsoft.com', '/td', 'SHA256',
             '/dlib', args.dlib, '/dmdf', metadata, '/d', description,
-            '/du', 'https://github.com/imputnet/helium-windows',
+            '/du', tinparatan.SIGNING_URL,
             *files[start:start + 32])
     verify_signatures(files, args.signtool)
 
@@ -67,13 +71,15 @@ def sign_staged_binaries(work, args, metadata):
     groups = {}
     files = pe_files(work / 'portable') + pe_files(work / 'payload') + [work / 'setup.exe']
     for file in files:
-        description = ('Helium Update Helper'
-                       if file.name.lower() == 'helium_update_helper.exe' else 'Helium')
+        description = (tinparatan.SIGNING_HELPER
+                       if file.name.lower() == 'helium_update_helper.exe'
+                       else tinparatan.SIGNING_PRODUCT)
         groups.setdefault((description, package.digest(file)), []).append(file)
-    if {description for description, _ in groups} != {'Helium', 'Helium Update Helper'}:
+    expected = {tinparatan.SIGNING_PRODUCT, tinparatan.SIGNING_HELPER}
+    if {description for description, _ in groups} != expected:
         raise ValueError('Expected browser and updater helper signing inputs')
 
-    for description in ('Helium', 'Helium Update Helper'):
+    for description in (tinparatan.SIGNING_PRODUCT, tinparatan.SIGNING_HELPER):
         originals = [paths[0] for (label, _), paths in groups.items() if label == description]
         sign(originals, description, args, metadata)
     for original, *copies in groups.values():
@@ -137,7 +143,7 @@ def main():
                 'setup': package.digest(work / 'setup.exe')}
     nsis, mini, portable = package.build_packages(work, args.build_outputs, args.seven_zip)
     package.verify_packages(work, args.seven_zip, nsis, mini, portable, expected)
-    sign([nsis, mini], 'Helium Installer', args, metadata)
+    sign([nsis, mini], tinparatan.SIGNING_INSTALLER, args, metadata)
     emit('artifacts', work / 'artifacts')
 
 

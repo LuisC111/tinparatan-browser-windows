@@ -14,7 +14,18 @@ jobs:
         uses: actions/checkout@v4
         with: { submodules: true, fetch-depth: 0 }
 
+      - name: Require the Tinparatan rebrand on the submodule main branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git -C helium-chromium fetch origin main
+          if ! git -C helium-chromium cat-file -e origin/main:tinparatan/substitute_product_name.py; then
+            echo "helium-chromium origin/main does not contain tinparatan/substitute_product_name.py." >&2
+            echo "Merge https://github.com/LuisC111/tinparatan-browser/pull/1 before bumping." >&2
+            exit 1
+          fi
+
       - name: Run bump-platform action from helium-chromium
         uses: imputnet/helium-chromium/.github/actions/bump-platform@main
         with:
-          token: ${{ secrets.GHPAT }}
+          token: ${{ secrets.GHPAT || secrets.GITHUB_TOKEN }}

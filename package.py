@@ -33,6 +33,9 @@ import filescfg
 sys.path.pop(0)
 
 _ROOT_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(_ROOT_DIR / 'tinparatan'))
+import packaging as tinparatan
+sys.path.pop(0)
 _BUILD_SRC = _ROOT_DIR / 'build' / 'src'
 _ICON_PATH = _BUILD_SRC / 'chrome' / 'app' / 'theme' / 'chromium' / 'win' / 'chromium.ico'
 _PORTABLE_EXCLUSIONS = {Path(name) for name in (
@@ -65,6 +68,7 @@ def _build_nsis_installer(version, arch, build_outputs, output_file):
         f'-DICON_FILE={_ICON_PATH}',
         f'-DOUTPUT_FILE={output_file}',
         f'-DLICENSE_FILE={_ROOT_DIR / "LICENSE"}',
+        *tinparatan.nsis_defines(),
         str(_ROOT_DIR / 'installer' / 'helium.nsi'),
     ]
     subprocess.run(cmd, check=True)
@@ -82,10 +86,11 @@ def create_packages(build_outputs, output_dir, cpu_arch='64bit', *, installer_in
 
     target_cpu = get_target_cpu(installer_inputs)
 
-    installer_output = output_dir / f'helium_{version}_{target_cpu}-installer.exe'
+    installer_output = output_dir / tinparatan.artifact_name(version, target_cpu, 'installer')
     _build_nsis_installer(version, target_cpu, installer_inputs, installer_output)
 
-    mini_installer_output = output_dir / f'helium_{version}_{target_cpu}-mini-installer.exe'
+    mini_installer_output = output_dir / tinparatan.artifact_name(
+        version, target_cpu, 'mini-installer')
     shutil.copy2(installer_inputs / 'mini_installer.exe', mini_installer_output)
 
     timestamp = None
@@ -95,7 +100,7 @@ def create_packages(build_outputs, output_dir, cpu_arch='64bit', *, installer_in
     except FileNotFoundError:
         pass
 
-    output = output_dir / f'helium_{version}_{target_cpu}-windows.zip'
+    output = output_dir / tinparatan.artifact_name(version, target_cpu, 'zip')
 
     filescfg.create_archive(
         portable_files(build_outputs, cpu_arch), tuple(), build_outputs, output, timestamp)
